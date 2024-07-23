@@ -5,6 +5,8 @@
     <meta charset="utf-8">
     <title>XSS Demo</title>
     <link rel="stylesheet" href="/static/style.css">
+    <script src="../static/jquery-3.7.1.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.32/angular.js"></script>
   </head>
 
   <body>
@@ -33,7 +35,25 @@
         <p>{{ comment }}</p>
       </div>
     {% endfor %}
-
+    <input type="hidden" accesskey='X' onclick="alert('XSS')"/>
+    <script>
+   $(document).ready(function(){
+    $('form:first').submit(function(){
+      var query = new URLSearchParams(document.location.search).get('q');
+      var script_elemt = document.getElementsByTagName('script')[1];
+      var new_para = document.createElement('p');
+      new_para.innerHTML = query;
+      script_elemt.insertAdjacentElement('afterend', new_para);
+    });
+   });
+    </script>
+    <script>
+      const head = document.querySelector("head");
+      var search_term = new URLSearchParams(document.location.search).get("q");
+      var base = document.createElement("base");
+      base.setAttribute("href", search_term);
+      head.appendChild(base)
+    </script>
     <!-- Write form -->
     <form action="/" method="POST">
       <input type="text" name="comment" 

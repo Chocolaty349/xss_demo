@@ -9,6 +9,8 @@ app.config.update(
     SESSION_COOKIE_SAMESITE='Lax'  
 )
 
+block_list = ["<script>", "</sciprt>", "alert", 'cookie']
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if 'user_id' not in session:
@@ -19,8 +21,13 @@ def index():
         return redirect(url_for('index'))
         
     search_query = request.args.get('q')
-    comments = db.get_comments(search_query)
-
+    for item in block_list:
+        if search_query == None or item not in search_query:
+            comments = db.get_comments(search_query)
+        else:  
+            comments = ''
+            search_query = 'not allowed character'
+        
     return render_template('index.html',
                            comments=comments,
                            search_query=search_query,
@@ -29,5 +36,6 @@ def index():
 def gen_userId():
     import uuid
     return str(uuid.uuid4())
+
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=False)
+    app.run(host='0.0.0.0', port=5000, debug=True)
