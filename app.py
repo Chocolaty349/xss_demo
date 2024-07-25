@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session, redirect, url_for
+from flask import Flask, render_template, request, session, redirect, url_for, make_response
 import db
 
 app = Flask(__name__)
@@ -28,10 +28,14 @@ def index():
             comments = ''
             search_query = 'not allowed character'
         
+    # r = make_response(render_template('index.html',
+    #                   comments=comments,
+    #                   search_query=search_query))
+    # r.headers.set('Content-Security-Policy', "script-src 'none'")
+    # uncomment to enable CSP
     return render_template('index.html',
-                           comments=comments,
-                           search_query=search_query,
-                           )
+                      comments=comments,
+                      search_query=search_query)
 
 def gen_userId():
     import uuid
